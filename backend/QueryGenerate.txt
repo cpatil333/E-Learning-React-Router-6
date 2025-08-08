@@ -1,0 +1,228 @@
+mutation($register: UserInput!){
+  signup(register: $register) {
+    id
+    fullName
+    email
+    role
+  }
+}
+
+{
+  "register": {
+   "fullName": "Priya Mehta",
+    "email": "priya@edu.com",
+    "password": "Password123",
+    "role": "teacher"
+  }
+}
+
+mutation($update: UserUpdateInput!){
+  udpateUser(update: $update) {
+    id
+    fullName
+    email
+    role
+  }
+}
+
+{
+  "update": {
+    "id": "6891c15e5221a51cce4c703f",
+    "fullName": "chandrashekhar Bairam Patil",
+    "email": "chand@test.com",
+    "password": "Password123",
+    "role": "student"
+  }
+}
+
+mutation($userDeleteId: ID!){
+  userDelete(id: $userDeleteId) {
+    id
+    fullName
+  }
+}
+
+{
+  "userDeleteId": "6891c15e5221a51cce4c703f"
+}
+
+mutation($login: LoginInput!){
+  signin(login: $login) {
+    token
+    user {
+      id
+      fullName
+      role
+    }
+  }
+}
+
+{
+  "login": {
+   "email": "robert@edu.com",
+    "password": "Password123"
+  }
+}
+
+mutation($newCourse: CourseInput!){
+  createCourse(newCourse: $newCourse) {
+    id
+    title
+    description
+    teacherId
+  }
+}
+
+{
+  "newCourse": {
+    "title": "Database Fundamentals",
+    "description": "Learn relational database concepts with PostgreSQL.",
+    "teacherId": "6889d51f1691b3c09fbd1556"
+  }
+}
+
+mutation($update: CourseUpdateInput!){
+  udpateCourse(update: $update) {
+    id
+    title
+    description
+    teacherId
+  }
+}
+
+{
+  "update": {
+    "id": "68947e59d485b06881aa1b40",
+     "title": "React Fundamentals",
+    "description": "Learn relational database concepts with PostgreSQL.",
+    "teacherId": "6889d52a1691b3c09fbd1557"
+  }
+}
+mutation($newEnrollment: EnrollmentInput!){
+  createEnrollment(newEnrollment: $newEnrollment) {
+    id
+    userId
+    courseId
+  }
+}
+
+{
+  "newEnrollment": {
+    "userId": "6889d50c1691b3c09fbd1554",
+    "courseId": "6889dad0d7cadfa83445bb85"
+  }
+}
+
+mutation ($newLesson: LessonInput!) {
+  createLesson(newLesson: $newLesson) {
+    id
+    title
+    content
+    courseId
+  }
+}
+
+{
+  "newLesson": {
+     "title": "React Props and State",
+    "content": "Learn how to manage data with props and state.",
+    "courseId": "6889dad0d7cadfa83445bb85",
+  }
+}
+
+Query
+***********
+1.Get All users list
+query{
+  users {
+    id
+    fullName
+    email
+    role
+  }
+}
+
+ 2. Get Enrollment by ID
+ query($enrollmentById: ID!){
+  enrollmentById(id: $enrollmentById) {
+    id
+    userId
+    user {
+      fullName
+    }
+    courseId
+    course {
+      title
+    }
+  }
+}
+
+3. Get Enrollments for a Specific User
+query($enrollmentsByUserId: ID!){
+  enrollmentsByUser(id: $enrollmentsByUserId) {
+  enrollments {
+    course {
+      id
+      title
+    }
+    enrolledAt
+  }
+  }
+}
+
+4. Get Enrollments for a Specific Course
+query ($courseId: ID!) {
+  enrollmentsByCourse(courseId: $courseId) {
+    id
+    user {
+      fullName
+    }
+    enrolledAt
+  }
+}
+
+5. Get all course list
+query{
+  courses {
+    id
+    title
+    description
+  }
+}
+
+6.Get User by ID
+query($userById: ID!){
+  userById(id: $userById) {
+    id
+    fullName
+    email
+    role
+  }
+}
+
+{
+  "userById": "6889d50c1691b3c09fbd1554"
+}
+
+7. Get Teacher list
+query{
+  getTeachers {
+    id
+    fullName
+    role
+  }
+}
+
+8.Get Course by ID
+query($courseById: ID!){
+  courseById(id: $courseById) {
+    id
+    title
+    description
+    teacherId
+  }
+}
+
+{
+  "courseById": "6889da9bd7cadfa83445bb84"
+}

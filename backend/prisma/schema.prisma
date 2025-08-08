@@ -1,0 +1,67 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  fullName    String
+  email       String       @unique
+  password    String
+  role        String // 'student' | 'teacher' | 'admin'
+  courses     Course[]     @relation("TeacherCourses")
+  enrollments Enrollment[]
+}
+
+model Course {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String
+  teacher     User         @relation("TeacherCourses", fields: [teacherId], references: [id])
+  teacherId   String       @db.ObjectId
+  lessons     Lesson[]
+  enrollments Enrollment[]
+  Quiz        Quiz[]
+}
+
+model Lesson {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  title    String
+  content  String
+  course   Course @relation(fields: [courseId], references: [id])
+  courseId String @db.ObjectId
+}
+
+model Enrollment {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String   @db.ObjectId
+  course     Course   @relation(fields: [courseId], references: [id])
+  courseId   String   @db.ObjectId
+  enrolledAt DateTime @default(now())
+}
+
+model Quiz {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  course    Course     @relation(fields: [courseId], references: [id])
+  courseId  String     @db.ObjectId
+  questions Question[]
+}
+
+model Question {
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  text   String
+  quiz   Quiz   @relation(fields: [quizId], references: [id])
+  quizId String @db.ObjectId
+}
