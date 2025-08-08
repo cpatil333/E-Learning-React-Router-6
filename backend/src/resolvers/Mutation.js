@@ -171,18 +171,4 @@ export const Mutation = {
     });
     return udpateData;
   },
-
-  userSearch: async (parent, { search }, context) => {
-    const { db, user } = context;
-    isAuth(user);
-    
-    const searchLower = search.toLowerCase();
-
-    const filteredUsers = db.user.filter((user) => {
-      user.fullName.include(searchLower) ||
-        user.email.include(searchLower) ||
-        user.role.include(searchLower);
-    });
-    return filteredUsers;
-  },
 };

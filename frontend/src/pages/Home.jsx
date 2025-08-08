@@ -1,13 +1,24 @@
-import React from "react";
+import React, { useState } from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { USER_DELETE } from "../apollo/Mutation";
+import { getSearchFilter } from "../API/getSearchFilter";
 
 export const Home = () => {
   const navigate = useNavigate();
   const userList = useLoaderData();
+  const [searchTxt, setSearchTxt] = useState("");
   const [userDelete] = useMutation(USER_DELETE);
-  console.log(userList);
+  //console.log(userList);
+  const {
+    data: filterData,
+    loading: filterLoading,
+    error: filterError,
+  } = getSearchFilter(searchTxt);
+
+  const handleSearch = (e) => {
+    setSearchTxt(e.target.value);
+  };
 
   const handleDelete = (e) => {
     const userId = e;
@@ -28,6 +39,8 @@ export const Home = () => {
     }
   };
 
+  const displayUsers = filterData?.userSearch || userList.users;
+  console.log(filterData);
   return (
     <div className="container">
       <h2>User List</h2>
@@ -36,6 +49,11 @@ export const Home = () => {
           Add User
         </button>
       </div>
+      <div>
+        <input type="text" placeholder="Search...." onKeyUp={handleSearch} />
+      </div>
+      {filterLoading && <p>Loading...</p>}
+      {filterError && <p>Error: {filterError.message}</p>}
       <table>
         <thead>
           <tr>
@@ -46,7 +64,7 @@ export const Home = () => {
           </tr>
         </thead>
         <tbody>
-          {userList.users.map((user) => (
+          {displayUsers.map((user) => (
             <tr key={user.id}>
               <td>{user.fullName}</td>
               <td>{user.email}</td>

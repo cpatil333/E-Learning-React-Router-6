@@ -226,3 +226,19 @@ query($courseById: ID!){
 {
   "courseById": "6889da9bd7cadfa83445bb84"
 }
+
+9. Search multiple fields
+query ($filter: FilterInput!) {
+  userSearch(filter: $filter) {
+    id
+    fullName
+    email
+    role
+  }
+}
+
+{
+  "filter": {
+    "search": "teacher"
+  }
+}

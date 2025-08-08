@@ -50,3 +50,13 @@ export const GET_COURSE = gql`
     }
   }
 `;
+export const GET_FILTER_SEARCH = gql`
+  query ($filter: FilterInput!) {
+    userSearch(filter: $filter) {
+      id
+      fullName
+      email
+      role
+    }
+  }
+`;

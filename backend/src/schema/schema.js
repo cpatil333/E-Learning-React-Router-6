@@ -110,7 +110,7 @@ export const typeDefs = gql`
   type Query {
     users: [User!]!
     userById(id: ID!): User!
-    userSearch(filter: FilterInput): [User!]!
+    userSearch(filter: FilterInput!): [User!]!
     courses: [Course!]!
     courseById(id: ID!): Course!
     getTeachers: [User!]!

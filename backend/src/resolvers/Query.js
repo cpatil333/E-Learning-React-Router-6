@@ -72,4 +72,20 @@ export const Query = {
     });
     return data;
   },
+
+  userSearch: async (parent, { filter }, context) => {
+    const { db, user } = context;
+    isAuth(user);
+    const { search } = filter;
+
+    return db.user.findMany({
+      where: {
+        OR: [
+          { fullName: { contains: search, mode: "insensitive" } },
+          { email: { contains: search, mode: "insensitive" } },
+          { role: { contains: search, mode: "insensitive" } },
+        ],
+      },
+    });
+  },
 };
