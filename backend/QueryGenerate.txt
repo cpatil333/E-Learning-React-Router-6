@@ -242,3 +242,22 @@ query ($filter: FilterInput!) {
     "search": "teacher"
   }
 }
+
+10. Search filters by passing parameter
+query($filter: SelectInput!){
+  userFilter(filter: $filter) {
+    id
+    fullName
+    email
+    role
+  }
+}
+
+{
+  "filter": {
+    "fullName":"Priya Mehta",
+    "email":"priya@edu.com",
+    "role":"teacher"
+  }
+}
+

@@ -2,32 +2,42 @@ import React, { useEffect, useState } from "react";
 import { useLoaderData, useNavigate } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { USER_DELETE } from "../apollo/Mutation";
-import { getSearchFilter } from "../API/getSearchFilter";
+import { getUsersFilter } from "../API/getUsersFilter";
 
-export const Home = () => {
+export const Users = () => {
   const navigate = useNavigate();
   const userList = useLoaderData();
+  //console.log(userList);
   const [names, setNames] = useState([]);
   const [emails, setEmails] = useState([]);
   const [roles, setRoles] = useState([]);
-  const [searchTxt, setSearchTxt] = useState("");
   const [userDelete] = useMutation(USER_DELETE);
-  //console.log(userList);
 
-  //calling method for fill dropdownlist
-  useEffect(() => {
-    fetchUser();
-  }, []);
+  const [search, setSearch] = useState({
+    fullName: "",
+    email: "",
+    role: "",
+  });
 
   const {
     data: filterData,
-    loading: filterLoading,
+    loading: filterLoding,
     error: filterError,
-  } = getSearchFilter(searchTxt);
+  } = getUsersFilter(search);
 
-  const handleSearch = (e) => {
-    setSearchTxt(e.target.value);
-  };
+  //calling method for fill dropdownlist
+  useEffect(() => {
+    const data = userList.users;
+    setNames(
+      [...new Set(data.map((u) => u.fullName))].map((fullName) => ({
+        fullName,
+      }))
+    );
+    setEmails(
+      [...new Set(data.map((u) => u.email))].map((email) => ({ email }))
+    );
+    setRoles([...new Set(data.map((u) => u.role))]);
+  }, [userList]);
 
   const handleDelete = (e) => {
     const userId = e;
@@ -48,16 +58,16 @@ export const Home = () => {
     }
   };
 
-  const fetchUser = async () => {
-    const data = await userList.users;
-    setNames(data.map((u) => ({ fullName: u.fullName })));
-    setEmails(data.map((e) => ({ email: e.email })));
-    setRoles([...new Set(data.map((u) => u.role).filter(Boolean))]);
+  const handleSelect = (e) => {
+    setSearch((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value === "select" ? "" : e.target.value,
+    }));
   };
- 
-const handleSelect = (e) => {};
 
- const displayUsers = filterData?.userSearch || userList.users;
+  //console.log(search);
+  const displayUsers = filterData?.userFilter || userList.users;
+
   return (
     <div className="container">
       <h2>User List</h2>
@@ -66,9 +76,6 @@ const handleSelect = (e) => {};
           Add User
         </button>
       </div>
-       <div>
-        <input type="text" placeholder="Search...." onKeyUp={handleSearch} />
-      </div> 
       <div className="filter-select">
         <div>
           <label>Full Name :</label>
@@ -104,8 +111,6 @@ const handleSelect = (e) => {};
           </select>
         </div>
       </div>
-      {filterLoading && <p>Loading...</p>}
-      {filterError && <p>Error: {filterError.message}</p>}
       <table>
         <thead>
           <tr>

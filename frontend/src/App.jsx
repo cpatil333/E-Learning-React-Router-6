@@ -14,6 +14,7 @@ import { getUser } from "./API/getUser";
 import { courseData, CreateCourse } from "./pages/CreateCourse";
 import { EditCourse } from "./pages/EditCourse";
 import { getCourse } from "./API/getCourse";
+import { Users } from "./pages/Users";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -24,7 +25,8 @@ const App = () => {
       children: [
         {
           path: "/",
-          element: <Home />,
+          // element: <Home />,
+          element: <Users />,
           loader: getUserData,
         },
         {

@@ -60,3 +60,14 @@ export const GET_FILTER_SEARCH = gql`
     }
   }
 `;
+
+export const GET_USERS_FILTER = gql`
+  query ($filter: SelectInput!) {
+    userFilter(filter: $filter) {
+      id
+      fullName
+      email
+      role
+    }
+  }
+`;

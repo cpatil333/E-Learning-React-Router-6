@@ -88,4 +88,29 @@ export const Query = {
       },
     });
   },
+
+  userFilter: async (parent, { filter }, context) => {
+    const { db, user } = context;
+    isAuth(user);
+    
+    const where = {
+      AND: [],
+    };
+    if (filter.fullName) {
+      where.AND.push({
+        fullName: { contains: filter.fullName, mode: "insensitive" },
+      });
+    }
+    if (filter.email) {
+      where.AND.push({
+        email: { contains: filter.email, mode: "insensitive" },
+      });
+    }
+    if (filter.role) {
+      where.AND.push({
+        role: { contains: filter.role, mode: "insensitive" },
+      });
+    }
+    return db.user.findMany({ where });
+  },
 };

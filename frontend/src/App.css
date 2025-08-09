@@ -74,9 +74,30 @@ ul li {
   display: inline-block;
   margin: 10px;
 }
+
 .Link {
   color: white;
   font-size: 20px;
   text-decoration: none;
   cursor: pointer;
+}
+
+.filter-select {
+  display: flex;
+  flex-direction: row;
+  gap: 20px; /* space between each filter */
+  align-items: center; /* vertical alignment inside row */
+  justify-content: center; /* horizontal centering */
+  margin-bottom: 20px;
+}
+
+.filter-select div {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* space between label and select */
+}
+
+label {
+  font-size: 20px;
+  font-weight: bold;
 }
