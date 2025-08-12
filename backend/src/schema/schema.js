@@ -97,6 +97,7 @@ export const typeDefs = gql`
     userId: String!
     courseId: String!
   }
+
   input LessonInput {
     title: String!
     content: String!
@@ -113,11 +114,36 @@ export const typeDefs = gql`
     role: String
   }
 
+  input PaginateInput {
+    page: Int!
+    limit: Int!
+  }
+
+  type UserPaginationResponse {
+    items: [User!]!
+    totalItems: Int!
+    totalPages: Int!
+    currentPage: Int!
+    hasNextPage: Boolean!
+    hasPreviousPage: Boolean!
+  }
+
+  type CoursePaginationResponse {
+    items: [Course!]!
+    totalItems: Int!
+    totalPages: Int!
+    currentPage: Int!
+    hasNextPage: Boolean!
+    hasPreviousPage: Boolean!
+  }
+
   type Query {
     users: [User!]!
     userById(id: ID!): User!
     userSearch(filter: FilterInput!): [User!]!
     userFilter(filter: SelectInput!): [User!]!
+    userPagination(options: PaginateInput!): UserPaginationResponse!
+    coursePagination(options: PaginateInput!): CoursePaginationResponse!
     courses: [Course!]!
     courseById(id: ID!): Course!
     getTeachers: [User!]!

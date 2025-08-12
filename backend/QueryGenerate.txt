@@ -261,3 +261,50 @@ query($filter: SelectInput!){
   }
 }
 
+11. Query User Pagination:
+query ($options: PaginateInput!) {
+  userPagination(options: $options) {
+    items {
+      id
+      fullName
+      email
+      role
+    }
+    currentPage
+    totalItems
+    totalPages
+    hasNextPage
+    hasPreviousPage
+  }
+}
+
+{
+  "options": {
+    "page": 1,
+    "limit": 5
+  }
+}
+
+12. Query User Pagination:
+query($options: PaginateInput!){
+  coursePagination(options: $options) {
+    items {
+      id
+      title
+      description
+      teacherId
+    }
+    totalItems
+    totalPages
+    hasNextPage
+    hasPreviousPage
+  }
+}
+
+{
+  "options": {
+    "page": 2,
+    "limit": 2
+  }
+}
+

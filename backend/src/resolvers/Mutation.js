@@ -4,7 +4,7 @@ import isAuth from "../middleware/isAuth.js";
 
 export const Mutation = {
   signup: async (parent, { register }, context) => {
-    console.log(register);
+    // console.log(register);
     const existEmail = await context.db.user.findFirst({
       where: { email: register.email },
     });

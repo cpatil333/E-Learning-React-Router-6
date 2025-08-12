@@ -1,13 +1,21 @@
 import isAuth from "../middleware/isAuth.js";
 export const Query = {
   users: async (parent, args, context) => {
-    return await context.db.user.findMany();
+    return await context.db.user.findMany({
+      take: 4,
+      orderBy: { id: "asc" },
+    });
   },
+
   enrollments: async (parent, args, context) => {
     return await context.db.enrollment.findMany();
   },
+
   courses: async (parent, args, context) => {
-    return await context.db.course.findMany();
+    return await context.db.course.findMany({
+      take: 4,
+      orderBy: { id: "asc" },
+    });
   },
   lessons: async (parent, args, context) => {
     return await context.db.lesson.findMany();
@@ -92,7 +100,7 @@ export const Query = {
   userFilter: async (parent, { filter }, context) => {
     const { db, user } = context;
     isAuth(user);
-    
+
     const where = {
       AND: [],
     };
@@ -112,5 +120,60 @@ export const Query = {
       });
     }
     return db.user.findMany({ where });
+  },
+
+  userPagination: async (parent, { options }, context) => {
+    const { db, user } = context;
+    const { page, limit } = options;
+    isAuth(user);
+
+    const skip = (page - 1) * limit;
+
+    //count total users
+    const totalItems = await db.user.count();
+
+    // Fetch users for current page
+    const items = await db.user.findMany({
+      skip,
+      take: limit,
+    });
+
+    const totalPages = Math.ceil(totalItems / limit);
+
+    return {
+      items,
+      totalItems,
+      totalPages,
+      currentPage: page,
+      hasNextPage: page < totalPages,
+      hasPreviousPage: page > 1,
+    };
+  },
+
+  coursePagination: async (parent, { options }, context) => {
+    const { db, user } = context;
+    const { page, limit } = options;
+    isAuth(user);
+
+    const skip = (page - 1) * limit;
+
+    const totalItems = await db.course.count();
+
+    //total items
+    const items = await db.course.findMany({
+      skip,
+      take: limit,
+    });
+
+    const totalPages = Math.ceil(totalItems / limit);
+
+    return {
+      items,
+      totalItems,
+      totalPages,
+      currentPage: page,
+      hasNextPage: page < totalPages,
+      hasPreviousPage: page > 1,
+    };
   },
 };

@@ -3,6 +3,7 @@ import { useLoaderData, useNavigate } from "react-router-dom";
 import { useMutation } from "@apollo/client";
 import { USER_DELETE } from "../apollo/Mutation";
 import { getUsersFilter } from "../API/getUsersFilter";
+import { getUserPagination } from "../API/getUserPagination";
 
 export const Users = () => {
   const navigate = useNavigate();
@@ -13,31 +14,28 @@ export const Users = () => {
   const [roles, setRoles] = useState([]);
   const [userDelete] = useMutation(USER_DELETE);
 
+  // calling pagination user data
+  const [page, setPage] = useState(1);
+  const limit = 4; // how many rows per page
+
   const [search, setSearch] = useState({
     fullName: "",
     email: "",
     role: "",
   });
 
+  //calling search filter data
   const {
     data: filterData,
     loading: filterLoding,
     error: filterError,
   } = getUsersFilter(search);
 
-  //calling method for fill dropdownlist
-  useEffect(() => {
-    const data = userList.users;
-    setNames(
-      [...new Set(data.map((u) => u.fullName))].map((fullName) => ({
-        fullName,
-      }))
-    );
-    setEmails(
-      [...new Set(data.map((u) => u.email))].map((email) => ({ email }))
-    );
-    setRoles([...new Set(data.map((u) => u.role))]);
-  }, [userList]);
+  //calling pagination user data
+  const { data: paginateData } = getUserPagination({
+    page,
+    limit,
+  });
 
   const handleDelete = (e) => {
     const userId = e;
@@ -65,8 +63,44 @@ export const Users = () => {
     }));
   };
 
+  // build a source list fallback (filtered if present else loader)
+  const sourceList = filterData?.userFilter ?? userList?.users ?? [];
+
+  // totalPages fallback: prefer server-provided, otherwise compute from local source
+  const totalPages =
+    paginateData?.userPagination?.totalPages ??
+    Math.max(1, Math.ceil((sourceList.length || 0) / limit));
+
+  // clamp page if totalPages changed (prevents page > totalPages)
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages);
+    if (page < 1) setPage(1);
+  }, [totalPages, page]);
+
+  // reset page to 1 when search/filter changes (optional, usually desired)
+  useEffect(() => {
+    setPage(1);
+  }, [search.fullName, search.email, search.role]);
+
+  //calling method for fill dropdownlist
+  useEffect(() => {
+    const data = userList.users;
+    setNames(
+      [...new Set(data.map((u) => u.fullName))].map((fullName) => ({
+        fullName,
+      }))
+    );
+    setEmails(
+      [...new Set(data.map((u) => u.email))].map((email) => ({ email }))
+    );
+    setRoles([...new Set(data.map((u) => u.role))]);
+  }, [userList]);
+
   //console.log(search);
-  const displayUsers = filterData?.userFilter || userList.users;
+  const displayUsers =
+    filterData?.userFilter ||
+    paginateData?.userPagination.items ||
+    userList.users;
 
   return (
     <div className="container">
@@ -144,6 +178,33 @@ export const Users = () => {
           ))}
         </tbody>
       </table>
+      <div className="pagination">
+        <button
+          disabled={page === 1}
+          onClick={() => setPage((prev) => prev - 1)}
+        >
+          Prev
+        </button>
+
+        {Array.from(
+          { length: paginateData?.userPagination?.totalPages || 1 },
+          (_, i) => (
+            <button
+              key={i}
+              className={page === i + 1 ? "active" : ""}
+              onClick={() => setPage(i + 1)}
+            >
+              {i + 1}
+            </button>
+          )
+        )}
+        <button
+          disabled={page === paginateData?.userPagination?.totalPages}
+          onClick={() => setPage((prev) => prev + 1)}
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 };

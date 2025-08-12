@@ -71,3 +71,39 @@ export const GET_USERS_FILTER = gql`
     }
   }
 `;
+
+export const GET_USERS_PAGINATION = gql`
+  query ($options: PaginateInput!) {
+    userPagination(options: $options) {
+      items {
+        id
+        fullName
+        email
+        role
+      }
+      currentPage
+      totalItems
+      totalPages
+      hasNextPage
+      hasPreviousPage
+    }
+  }
+`;
+
+export const GET_COURSE_PAGINATION = gql`
+  query ($options: PaginateInput!) {
+    coursePagination(options: $options) {
+      items {
+        id
+        title
+        description
+        teacherId
+      }
+      currentPage
+      totalItems
+      totalPages
+      hasNextPage
+      hasPreviousPage
+    }
+  }
+`;
